@@ -8,7 +8,7 @@ The test suite is split by module and contract surface.
 - `tests/security/test_token_store.py`: memory, null, and Redis-compatible token store behavior.
 - `tests/security/test_fastapi_adapter.py`: FastAPI dependency adapter behavior.
 - `tests/integration/test_redis_token_store.py`: real Redis refresh-token and revoke behavior.
-- `tests/integration/test_s3_storage_client.py`: real S3-compatible storage object lifecycle and multi-bucket behavior.
+- `tests/integration/test_s3_storage_client.py`: real S3-compatible object lifecycle and real public/private multi-bucket read/write behavior.
 - `tests/storage/test_storage_factory.py`: multi-client and profile routing.
 - `tests/storage/test_url_builder.py`: public URL and S3-compatible client URL behavior.
 
@@ -66,7 +66,7 @@ STORAGE_PRIVATE_BUCKET=secure-files \
 uv run --extra dev pytest -q tests/integration/test_s3_storage_client.py
 ```
 
-The storage integration tests create unique object keys under `rgc-backend-kit-it/` and clean them up after the run.
+The storage integration tests create unique object keys under `rgc-backend-kit-it/`, `public-it/`, and `private-it/`, then clean them up after the run. Both the public and private bucket profiles are verified with real upload, stat, list, and delete operations.
 
 ## Full Local Verification
 

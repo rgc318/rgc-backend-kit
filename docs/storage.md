@@ -172,7 +172,7 @@ STORAGE_PRIVATE_BUCKET=secure-files \
 uv run --extra dev pytest -q tests/integration/test_s3_storage_client.py
 ```
 
-It verifies upload, stat, list, copy, public URL building, presigned URL generation, presigned POST policy generation, delete, and public/private bucket profile routing.
+It verifies upload, stat, list, copy, public URL building, presigned URL generation, presigned POST policy generation, delete, and public/private bucket profile routing. The public and private bucket profiles are both tested with real upload, stat, list, and cleanup operations.
 
 ## Exceptions
 

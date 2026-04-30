@@ -121,7 +121,21 @@ def test_s3_storage_client_object_lifecycle(public_storage_client: S3StorageClie
         cleanup(public_storage_client, source_key, copied_key, f"{prefix}/browser-upload.txt")
 
 
-def test_storage_factory_routes_real_public_and_private_buckets() -> None:
+def assert_profile_can_write_and_read(factory: StorageFactory, profile_name: str, content: bytes) -> None:
+    storage = factory.get_profiled_storage(profile_name)
+    key = storage.key(f"{uuid4().hex}.txt")
+    cleanup(storage.client, key)
+
+    try:
+        metadata = storage.client.put_object(key, BytesIO(content), content_type="text/plain")
+        assert metadata["ETag"]
+        assert storage.client.stat_object(key)["ContentLength"] == len(content)
+        assert any(item["key"] == key for item in storage.client.list_objects(storage.profile.base_path))
+    finally:
+        cleanup(storage.client, key)
+
+
+def test_storage_factory_reads_and_writes_real_public_and_private_buckets() -> None:
     public_config = public_config_from_env()
     private_config = private_config_from_env()
     if public_config is None or private_config is None:
@@ -142,4 +156,5 @@ def test_storage_factory_routes_real_public_and_private_buckets() -> None:
     assert factory.get_client_by_profile("private_files").bucket_name == private_config.bucket_name
     assert factory.get_profiled_storage("public_assets").key("demo.txt").startswith("public-it/")
     assert factory.get_profiled_storage("private_files").key("demo.txt").startswith("private-it/")
-
+    assert_profile_can_write_and_read(factory, "public_assets", b"public bucket content")
+    assert_profile_can_write_and_read(factory, "private_files", b"private bucket content")
