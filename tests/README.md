@@ -8,6 +8,7 @@ The test suite is split by module and contract surface.
 - `tests/security/test_token_store.py`: memory, null, and Redis-compatible token store behavior.
 - `tests/security/test_fastapi_adapter.py`: FastAPI dependency adapter behavior.
 - `tests/integration/test_redis_token_store.py`: real Redis refresh-token and revoke behavior.
+- `tests/integration/test_s3_storage_client.py`: real S3-compatible storage object lifecycle and multi-bucket behavior.
 - `tests/storage/test_storage_factory.py`: multi-client and profile routing.
 - `tests/storage/test_url_builder.py`: public URL and S3-compatible client URL behavior.
 
@@ -48,8 +49,24 @@ uv run --extra dev pytest -q -m integration
 Expected current result when Redis is available:
 
 ```text
-2 passed, 32 deselected
+2 passed, 34 deselected
 ```
+
+## S3-Compatible Storage Integration Tests
+
+Storage integration tests are also marked with `integration` and skipped unless storage environment variables are present.
+
+```bash
+STORAGE_ACCESS_KEY=minio \
+STORAGE_SECRET_KEY=minio123 \
+STORAGE_ENDPOINT=127.0.0.1:9000 \
+STORAGE_PUBLIC_ENDPOINT=img.example.com \
+STORAGE_PUBLIC_BUCKET=public-assets \
+STORAGE_PRIVATE_BUCKET=secure-files \
+uv run --extra dev pytest -q tests/integration/test_s3_storage_client.py
+```
+
+The storage integration tests create unique object keys under `rgc-backend-kit-it/` and clean them up after the run.
 
 ## Full Local Verification
 
@@ -61,7 +78,7 @@ uv run --extra dev pytest -q -m 'unit or contract or integration or not integrat
 Expected current result:
 
 ```text
-34 passed
+36 passed
 ```
 
 Build package:

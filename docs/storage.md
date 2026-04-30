@@ -158,9 +158,24 @@ client.generate_presigned_post_policy(key, expires_in=3600)
 client.remove_object(key)
 ```
 
+## Integration Testing
+
+The storage integration suite can validate a real S3-compatible service such as MinIO.
+
+```bash
+STORAGE_ACCESS_KEY=minio \
+STORAGE_SECRET_KEY=minio123 \
+STORAGE_ENDPOINT=127.0.0.1:9000 \
+STORAGE_PUBLIC_ENDPOINT=img.example.com \
+STORAGE_PUBLIC_BUCKET=public-assets \
+STORAGE_PRIVATE_BUCKET=secure-files \
+uv run --extra dev pytest -q tests/integration/test_s3_storage_client.py
+```
+
+It verifies upload, stat, list, copy, public URL building, presigned URL generation, presigned POST policy generation, delete, and public/private bucket profile routing.
+
 ## Exceptions
 
 - `StorageConfigurationError`: missing client/profile or invalid storage registry configuration.
 - `StorageOperationError`: backend operation failed.
 - `StorageError`: base storage exception.
-

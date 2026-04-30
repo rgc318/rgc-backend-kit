@@ -343,3 +343,111 @@ This script covers:
 - `StorageFactory` multi-client/profile behavior
 - MinIO, R2, and AWS capability presets
 
+## Real Storage Integration
+
+When a MinIO or other S3-compatible service is available, run:
+
+```bash
+STORAGE_ACCESS_KEY=minio \
+STORAGE_SECRET_KEY=minio123 \
+STORAGE_ENDPOINT=127.0.0.1:9000 \
+STORAGE_PUBLIC_ENDPOINT=img.example.com \
+STORAGE_PUBLIC_BUCKET=public-assets \
+STORAGE_PRIVATE_BUCKET=secure-files \
+uv run --extra dev pytest -q tests/integration/test_s3_storage_client.py
+```
+
+This validates the real storage lifecycle with unique temporary object keys and cleanup.
+
+To verify the built wheel against a real storage service, install the storage extra in a clean environment:
+
+```bash
+rm -rf /tmp/rgc-backend-kit-storage-package-test
+mkdir -p /tmp/rgc-backend-kit-storage-package-test
+cd /tmp/rgc-backend-kit-storage-package-test
+
+uv venv
+uv pip install '/home/rgc318/Projects/rgc-backend-kit/dist/rgc_backend_kit-0.1.0-py3-none-any.whl[storage]'
+```
+
+Then run a storage lifecycle script from that environment:
+
+```bash
+STORAGE_ACCESS_KEY=minio \
+STORAGE_SECRET_KEY=minio123 \
+STORAGE_ENDPOINT=127.0.0.1:9000 \
+STORAGE_PUBLIC_ENDPOINT=img.example.com \
+STORAGE_PUBLIC_BUCKET=public-assets \
+STORAGE_PRIVATE_BUCKET=secure-files \
+.venv/bin/python - <<'PY'
+import os
+from io import BytesIO
+from uuid import uuid4
+
+from rgc_backend_kit.storage import (
+    MINIO_CAPABILITIES,
+    S3StorageClient,
+    S3StorageConfig,
+    StorageFactory,
+    StorageOperationError,
+    StorageProfileConfig,
+)
+
+config = S3StorageConfig(
+    access_key=os.environ["STORAGE_ACCESS_KEY"],
+    secret_key=os.environ["STORAGE_SECRET_KEY"],
+    endpoint=os.environ["STORAGE_ENDPOINT"],
+    public_endpoint=os.environ["STORAGE_PUBLIC_ENDPOINT"],
+    bucket_name=os.environ["STORAGE_PUBLIC_BUCKET"],
+    secure=False,
+    secure_public=True,
+    capabilities=MINIO_CAPABILITIES,
+)
+client = S3StorageClient(config)
+prefix = f"rgc-backend-kit-pkg-it/{uuid4().hex}"
+source_key = f"{prefix}/source.txt"
+copy_key = f"{prefix}/copy.txt"
+
+def cleanup(*keys):
+    for key in keys:
+        try:
+            client.remove_object(key)
+        except StorageOperationError:
+            pass
+
+try:
+    client.put_object(source_key, BytesIO(b"package storage content"), content_type="text/plain")
+    assert client.stat_object(source_key)["ContentLength"] == len(b"package storage content")
+    assert any(item["key"] == source_key for item in client.list_objects(prefix))
+    assert client.copy_object(copy_key, source_key)
+    assert source_key in client.generate_presigned_url("get_object", source_key, expires_in=60)
+
+    private_config = S3StorageConfig(
+        access_key=os.environ["STORAGE_ACCESS_KEY"],
+        secret_key=os.environ["STORAGE_SECRET_KEY"],
+        endpoint=os.environ["STORAGE_ENDPOINT"],
+        bucket_name=os.environ["STORAGE_PRIVATE_BUCKET"],
+        secure=False,
+        capabilities=MINIO_CAPABILITIES,
+    )
+    factory = StorageFactory.from_configs(
+        client_configs={"public": config, "private": private_config},
+        profiles={
+            "public_assets": StorageProfileConfig(client="public", base_path="public-it", public=True),
+            "private_files": StorageProfileConfig(client="private", base_path="private-it"),
+        },
+    )
+    assert factory.get_client_by_profile("public_assets").bucket_name == os.environ["STORAGE_PUBLIC_BUCKET"]
+    assert factory.get_client_by_profile("private_files").bucket_name == os.environ["STORAGE_PRIVATE_BUCKET"]
+finally:
+    cleanup(source_key, copy_key)
+
+print("storage wheel integration test passed")
+PY
+```
+
+Expected output:
+
+```text
+storage wheel integration test passed
+```
