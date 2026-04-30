@@ -9,6 +9,8 @@ The test suite is split by module and contract surface.
 - `tests/security/test_fastapi_adapter.py`: FastAPI dependency adapter behavior.
 - `tests/integration/test_redis_token_store.py`: real Redis refresh-token and revoke behavior.
 - `tests/integration/test_s3_storage_client.py`: real S3-compatible object lifecycle and real public/private multi-bucket read/write behavior.
+- `tests/integration/test_r2_storage_client.py`: real Cloudflare R2 object lifecycle when R2 credentials are available.
+- `tests/storage/test_s3_client.py`: S3-compatible client branch coverage with fake boto clients.
 - `tests/storage/test_storage_factory.py`: multi-client and profile routing.
 - `tests/storage/test_url_builder.py`: public URL and S3-compatible client URL behavior.
 
@@ -23,7 +25,7 @@ uv run --extra dev pytest -q
 Expected current result:
 
 ```text
-32 passed, 2 deselected
+57 passed, 5 deselected
 ```
 
 ## Redis Integration Tests
@@ -49,7 +51,7 @@ uv run --extra dev pytest -q -m integration
 Expected current result when Redis is available:
 
 ```text
-2 passed, 34 deselected
+2 passed, 60 deselected
 ```
 
 ## S3-Compatible Storage Integration Tests
@@ -68,6 +70,21 @@ uv run --extra dev pytest -q tests/integration/test_s3_storage_client.py
 
 The storage integration tests create unique object keys under `rgc-backend-kit-it/`, `public-it/`, and `private-it/`, then clean them up after the run. Both the public and private bucket profiles are verified with real upload, stat, list, and delete operations.
 
+## R2 Integration Tests
+
+R2 integration tests are skipped unless Cloudflare R2 credentials are present.
+
+```bash
+R2_ACCESS_KEY=... \
+R2_SECRET_KEY=... \
+R2_ENDPOINT=<account-id>.r2.cloudflarestorage.com \
+R2_BUCKET=cdn-assets \
+R2_PUBLIC_ENDPOINT=cdn.example.com \
+uv run --extra dev pytest -q -m integration tests/integration/test_r2_storage_client.py
+```
+
+The R2 test validates upload, stat, list, copy, presigned GET, presigned PUT, and cleanup. Presigned POST is intentionally not required for R2 because provider compatibility differs from MinIO/S3.
+
 ## Full Local Verification
 
 ```bash
@@ -78,7 +95,7 @@ uv run --extra dev pytest -q -m 'unit or contract or integration or not integrat
 Expected current result:
 
 ```text
-36 passed
+61 passed, 1 skipped
 ```
 
 Build package:

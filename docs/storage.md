@@ -174,6 +174,19 @@ uv run --extra dev pytest -q tests/integration/test_s3_storage_client.py
 
 It verifies upload, stat, list, copy, public URL building, presigned URL generation, presigned POST policy generation, delete, and public/private bucket profile routing. The public and private bucket profiles are both tested with real upload, stat, list, and cleanup operations.
 
+Cloudflare R2 integration can be tested separately when credentials are available:
+
+```bash
+R2_ACCESS_KEY=... \
+R2_SECRET_KEY=... \
+R2_ENDPOINT=<account-id>.r2.cloudflarestorage.com \
+R2_BUCKET=cdn-assets \
+R2_PUBLIC_ENDPOINT=cdn.example.com \
+uv run --extra dev pytest -q -m integration tests/integration/test_r2_storage_client.py
+```
+
+The R2 test validates upload, stat, list, copy, presigned GET, presigned PUT, and cleanup. Presigned POST is not required by the R2 integration suite because compatibility differs by provider.
+
 ## Exceptions
 
 - `StorageConfigurationError`: missing client/profile or invalid storage registry configuration.

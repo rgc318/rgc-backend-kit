@@ -23,10 +23,10 @@ uv run --extra dev pytest -q
 Expected current result:
 
 ```text
-32 passed, 2 deselected
+57 passed, 5 deselected
 ```
 
-The two deselected tests are Redis integration tests.
+The deselected tests are Redis, MinIO/S3-compatible, and R2 integration tests.
 
 ## 2. Redis Integration Tests
 
@@ -40,7 +40,7 @@ uv run --extra dev pytest -q -m integration
 Expected current result:
 
 ```text
-2 passed, 32 deselected
+2 passed, 60 deselected
 ```
 
 These tests verify:
