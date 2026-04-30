@@ -85,6 +85,17 @@ uv run --extra dev pytest -q -m integration tests/integration/test_r2_storage_cl
 
 The R2 test validates upload, stat, list, copy, presigned GET, presigned PUT, and cleanup. Presigned POST is intentionally not required for R2 because provider compatibility differs from MinIO/S3.
 
+The current `ai_recipes` R2-style configuration maps to:
+
+```env
+R2_ENDPOINT=3fe4d9c093fe77e5877f03447e4f349d.r2.cloudflarestorage.com
+R2_BUCKET=test
+R2_PUBLIC_ENDPOINT=r2.rgcdev.top
+R2_REGION=auto
+```
+
+The access key and secret should be supplied from the host application's ignored environment files or CI secrets.
+
 ## Full Local Verification
 
 ```bash
@@ -95,7 +106,7 @@ uv run --extra dev pytest -q -m 'unit or contract or integration or not integrat
 Expected current result:
 
 ```text
-61 passed, 1 skipped
+62 passed
 ```
 
 Build package:

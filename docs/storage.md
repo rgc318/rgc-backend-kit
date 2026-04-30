@@ -187,6 +187,17 @@ uv run --extra dev pytest -q -m integration tests/integration/test_r2_storage_cl
 
 The R2 test validates upload, stat, list, copy, presigned GET, presigned PUT, and cleanup. Presigned POST is not required by the R2 integration suite because compatibility differs by provider.
 
+The current `ai_recipes` R2-style configuration uses:
+
+```env
+R2_ENDPOINT=3fe4d9c093fe77e5877f03447e4f349d.r2.cloudflarestorage.com
+R2_BUCKET=test
+R2_PUBLIC_ENDPOINT=r2.rgcdev.top
+R2_REGION=auto
+```
+
+Keep R2 credentials in ignored environment files or CI secrets.
+
 ## Exceptions
 
 - `StorageConfigurationError`: missing client/profile or invalid storage registry configuration.

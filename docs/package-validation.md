@@ -451,3 +451,57 @@ Expected output:
 ```text
 storage wheel integration test passed
 ```
+
+For R2 wheel validation, use the same isolated environment pattern:
+
+```bash
+R2_ACCESS_KEY=... \
+R2_SECRET_KEY=... \
+R2_ENDPOINT=3fe4d9c093fe77e5877f03447e4f349d.r2.cloudflarestorage.com \
+R2_BUCKET=test \
+R2_PUBLIC_ENDPOINT=r2.rgcdev.top \
+R2_REGION=auto \
+.venv/bin/python - <<'PY'
+import os
+from io import BytesIO
+from uuid import uuid4
+
+from rgc_backend_kit.storage import R2_CAPABILITIES, S3StorageClient, S3StorageConfig, StorageOperationError
+
+client = S3StorageClient(
+    S3StorageConfig(
+        access_key=os.environ["R2_ACCESS_KEY"],
+        secret_key=os.environ["R2_SECRET_KEY"],
+        endpoint=os.environ["R2_ENDPOINT"],
+        public_endpoint=os.environ["R2_PUBLIC_ENDPOINT"],
+        bucket_name=os.environ["R2_BUCKET"],
+        region=os.environ.get("R2_REGION", "auto"),
+        secure=True,
+        secure_public=True,
+        capabilities=R2_CAPABILITIES,
+    )
+)
+prefix = f"rgc-backend-kit-r2-pkg-it/{uuid4().hex}"
+source_key = f"{prefix}/source.txt"
+copy_key = f"{prefix}/copy.txt"
+
+def cleanup(*keys):
+    for key in keys:
+        try:
+            client.remove_object(key)
+        except StorageOperationError:
+            pass
+
+try:
+    client.put_object(source_key, BytesIO(b"r2 package content"), content_type="text/plain")
+    assert client.stat_object(source_key)["ContentLength"] == len(b"r2 package content")
+    assert any(item["key"] == source_key for item in client.list_objects(prefix))
+    assert client.copy_object(copy_key, source_key)
+    assert source_key in client.generate_presigned_url("get_object", source_key, expires_in=60)
+    assert source_key in client.generate_presigned_url("put_object", source_key, expires_in=60)
+finally:
+    cleanup(source_key, copy_key)
+
+print("r2 wheel integration test passed")
+PY
+```
