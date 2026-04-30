@@ -9,6 +9,8 @@ It currently provides:
 
 The package is designed for business services that need shared infrastructure without importing another application's settings, ORM models, response classes, or global factories.
 
+Host applications still own business logic such as login, password verification, permissions, file records, upload policies, and response schemas. See [Integration Boundary](docs/integration-boundary.md).
+
 ## Requirements
 
 - Python `>=3.10`
@@ -140,6 +142,7 @@ uv pip install '/home/rgc318/Projects/rgc-backend-kit/dist/rgc_backend_kit-0.1.0
 - [FastAPI JWT Guide](docs/fastapi-auth-guide.md)
 - [Storage Module](docs/storage.md)
 - [Storage Guide](docs/storage-guide.md)
+- [Integration Boundary](docs/integration-boundary.md)
 - [Troubleshooting](docs/troubleshooting.md)
 - [Package Validation](docs/package-validation.md)
 - [Testing Guide](tests/README.md)

@@ -40,6 +40,8 @@ MINIO_PRIVATE_BUCKET=secure-files
 
 The package does not read `.env` by itself. The host application should load environment variables and pass explicit config objects into this package.
 
+The host application still owns business services such as login, user lookup, password verification, file records, permissions, and upload policies. See [Integration Boundary](integration-boundary.md) for recommended wrapper structure.
+
 ## 3. Create JWT Manager
 
 ```python
@@ -163,4 +165,3 @@ Redis integration tests:
 ```bash
 REDIS_URL=redis://:password@127.0.0.1:6379/0 uv run --extra dev pytest -q -m integration
 ```
-
