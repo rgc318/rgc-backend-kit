@@ -21,28 +21,22 @@ Host applications still own business logic such as login, password verification,
 
 ## Install
 
-Local development:
+From PyPI:
 
 ```bash
-uv sync --extra dev
-```
-
-As a path dependency from another local project:
-
-```toml
-[project]
-dependencies = [
-    "rgc-backend-kit @ file:///home/rgc318/Projects/rgc-backend-kit",
-]
+pip install rgc-backend-kit
 ```
 
 With optional features:
 
-```toml
-[project]
-dependencies = [
-    "rgc-backend-kit[fastapi,redis,storage] @ file:///home/rgc318/Projects/rgc-backend-kit",
-]
+```bash
+pip install "rgc-backend-kit[fastapi,redis,storage]"
+```
+
+Local development:
+
+```bash
+uv sync --extra dev
 ```
 
 ## JWT Quick Start
