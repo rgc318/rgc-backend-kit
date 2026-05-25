@@ -33,6 +33,35 @@ With optional features:
 pip install "rgc-backend-kit[fastapi,redis,storage]"
 ```
 
+As a dependency in another project:
+
+```toml
+[project]
+dependencies = [
+    "rgc-backend-kit>=0.1.0,<0.2.0",
+]
+```
+
+Use extras only for the optional integrations that project needs:
+
+```toml
+[project]
+dependencies = [
+    "rgc-backend-kit[redis]>=0.1.0,<0.2.0",
+    "rgc-backend-kit[storage]>=0.1.0,<0.2.0",
+]
+```
+
+Host applications may add their own constraints for shared dependencies. For example, a Frappe 16 app should keep `PyJWT` in Frappe's supported range:
+
+```toml
+[project]
+dependencies = [
+    "PyJWT~=2.10.1",
+    "rgc-backend-kit>=0.1.0,<0.2.0",
+]
+```
+
 Local development:
 
 ```bash

@@ -4,12 +4,45 @@ This guide shows how to add `rgc-backend-kit` to a new backend project and use t
 
 ## 1. Add Dependency
 
-For a local project:
+For most projects, install the package from PyPI:
+
+```bash
+pip install rgc-backend-kit
+```
+
+Or declare it in `pyproject.toml`:
 
 ```toml
 [project]
 dependencies = [
-    "rgc-backend-kit[fastapi,redis,storage] @ file:///home/rgc318/Projects/rgc-backend-kit",
+    "rgc-backend-kit>=0.1.0,<0.2.0",
+]
+```
+
+Install only the optional integrations you need:
+
+```bash
+pip install "rgc-backend-kit[redis]"
+pip install "rgc-backend-kit[fastapi]"
+pip install "rgc-backend-kit[storage]"
+```
+
+For a project that needs all optional integrations:
+
+```toml
+[project]
+dependencies = [
+    "rgc-backend-kit[fastapi,redis,storage]>=0.1.0,<0.2.0",
+]
+```
+
+If the host framework already constrains a shared dependency, keep that constraint in the host project. For example, Frappe 16 expects `PyJWT~=2.10.1`:
+
+```toml
+[project]
+dependencies = [
+    "PyJWT~=2.10.1",
+    "rgc-backend-kit>=0.1.0,<0.2.0",
 ]
 ```
 

@@ -11,6 +11,7 @@ The goal is to verify not only the source tree, but also the built wheel install
 3. Build artifacts
 4. Wheel installation in an isolated environment
 5. Package-level functionality smoke test
+6. PyPI installation smoke test
 
 ## 1. Source Tests
 
@@ -100,6 +101,57 @@ The output should point to:
 
 ```text
 /tmp/rgc-backend-kit-package-full-test/.venv/lib/.../site-packages/rgc_backend_kit/...
+```
+
+## 4.1 Install Published Package from PyPI
+
+After a release has been published, verify a clean environment can install the public package:
+
+```bash
+rm -rf /tmp/rgc-backend-kit-pypi-test
+python3 -m venv /tmp/rgc-backend-kit-pypi-test
+/tmp/rgc-backend-kit-pypi-test/bin/python -m pip install rgc-backend-kit==0.1.0
+```
+
+Smoke test JWT functionality:
+
+```bash
+/tmp/rgc-backend-kit-pypi-test/bin/python - <<'PY'
+import asyncio
+from datetime import timedelta
+from importlib.metadata import version
+
+from rgc_backend_kit.security import JWTConfig, JWTManager, MemoryTokenStore
+
+
+async def main():
+    manager = JWTManager(
+        JWTConfig(
+            secret="test-secret-with-at-least-32-bytes",
+            issuer="pypi-test",
+            audience="local",
+            access_token_ttl=timedelta(minutes=5),
+            refresh_token_ttl=timedelta(minutes=10),
+        ),
+        token_store=MemoryTokenStore(),
+    )
+    pair = await manager.issue_pair("user-1")
+    payload = await manager.decode_access_token(pair.access_token)
+    print("version:", version("rgc-backend-kit"))
+    print("subject:", payload.subject)
+
+
+asyncio.run(main())
+PY
+```
+
+To verify all optional dependencies resolve:
+
+```bash
+rm -rf /tmp/rgc-backend-kit-pypi-extras-test
+python3 -m venv /tmp/rgc-backend-kit-pypi-extras-test
+/tmp/rgc-backend-kit-pypi-extras-test/bin/python -m pip install \
+  "rgc-backend-kit[fastapi,redis,storage]==0.1.0"
 ```
 
 ## 5. Package Functionality Smoke Test
