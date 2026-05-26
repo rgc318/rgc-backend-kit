@@ -36,12 +36,11 @@ dependencies = [
 ]
 ```
 
-If the host framework already constrains a shared dependency, keep that constraint in the host project. For example, Frappe 16 expects `PyJWT~=2.10.1`:
+If the host framework already constrains a shared dependency, let the host framework own that constraint. For example, Frappe 16 already depends on `PyJWT`, so a Frappe app should only add `rgc-backend-kit` directly:
 
 ```toml
 [project]
 dependencies = [
-    "PyJWT~=2.10.1",
     "rgc-backend-kit>=0.1.0,<0.2.0",
 ]
 ```

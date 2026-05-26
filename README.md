@@ -52,12 +52,11 @@ dependencies = [
 ]
 ```
 
-Host applications may add their own constraints for shared dependencies. For example, a Frappe 16 app should keep `PyJWT` in Frappe's supported range:
+Host applications may add their own constraints for shared dependencies. For example, a Frappe 16 app should let Frappe keep `PyJWT` in its supported range and only add this package directly:
 
 ```toml
 [project]
 dependencies = [
-    "PyJWT~=2.10.1",
     "rgc-backend-kit>=0.1.0,<0.2.0",
 ]
 ```
