@@ -64,8 +64,8 @@ uv build
 Expected artifacts:
 
 ```text
-dist/rgc_backend_kit-0.1.0.tar.gz
-dist/rgc_backend_kit-0.1.0-py3-none-any.whl
+dist/rgc_backend_kit-0.1.1.tar.gz
+dist/rgc_backend_kit-0.1.1-py3-none-any.whl
 ```
 
 ## 4. Install Wheel in an Isolated Environment
@@ -79,7 +79,7 @@ cd /tmp/rgc-backend-kit-package-full-test
 
 uv venv
 uv pip install \
-  '/home/rgc318/Projects/rgc-backend-kit/dist/rgc_backend_kit-0.1.0-py3-none-any.whl[fastapi,redis,storage]' \
+  '/home/rgc318/Projects/rgc-backend-kit/dist/rgc_backend_kit-0.1.1-py3-none-any.whl[fastapi,redis,storage]' \
   httpx
 ```
 
@@ -110,7 +110,7 @@ After a release has been published, verify a clean environment can install the p
 ```bash
 rm -rf /tmp/rgc-backend-kit-pypi-test
 python3 -m venv /tmp/rgc-backend-kit-pypi-test
-/tmp/rgc-backend-kit-pypi-test/bin/python -m pip install rgc-backend-kit==0.1.0
+/tmp/rgc-backend-kit-pypi-test/bin/python -m pip install rgc-backend-kit==0.1.1
 ```
 
 Smoke test JWT functionality:
@@ -151,7 +151,7 @@ To verify all optional dependencies resolve:
 rm -rf /tmp/rgc-backend-kit-pypi-extras-test
 python3 -m venv /tmp/rgc-backend-kit-pypi-extras-test
 /tmp/rgc-backend-kit-pypi-extras-test/bin/python -m pip install \
-  "rgc-backend-kit[fastapi,redis,storage]==0.1.0"
+  "rgc-backend-kit[fastapi,redis,storage]==0.1.1"
 ```
 
 ## 5. Package Functionality Smoke Test
@@ -419,7 +419,7 @@ mkdir -p /tmp/rgc-backend-kit-storage-package-test
 cd /tmp/rgc-backend-kit-storage-package-test
 
 uv venv
-uv pip install '/home/rgc318/Projects/rgc-backend-kit/dist/rgc_backend_kit-0.1.0-py3-none-any.whl[storage]'
+uv pip install '/home/rgc318/Projects/rgc-backend-kit/dist/rgc_backend_kit-0.1.1-py3-none-any.whl[storage]'
 ```
 
 Then run a storage lifecycle script from that environment:

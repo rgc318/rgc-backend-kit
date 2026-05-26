@@ -15,7 +15,7 @@ Or declare it in `pyproject.toml`:
 ```toml
 [project]
 dependencies = [
-    "rgc-backend-kit>=0.1.0,<0.2.0",
+    "rgc-backend-kit>=0.1.1,<0.2.0",
 ]
 ```
 
@@ -32,7 +32,7 @@ For a project that needs all optional integrations:
 ```toml
 [project]
 dependencies = [
-    "rgc-backend-kit[fastapi,redis,storage]>=0.1.0,<0.2.0",
+    "rgc-backend-kit[fastapi,redis,storage]>=0.1.1,<0.2.0",
 ]
 ```
 
@@ -41,7 +41,7 @@ If the host framework already constrains a shared dependency, let the host frame
 ```toml
 [project]
 dependencies = [
-    "rgc-backend-kit>=0.1.0,<0.2.0",
+    "rgc-backend-kit>=0.1.1,<0.2.0",
 ]
 ```
 

@@ -14,7 +14,7 @@ Host applications still own business logic such as login, password verification,
 ## Requirements
 
 - Python `>=3.10`
-- `pyjwt` for JWT support
+- `pyjwt>=2.8.0,<2.13.0` for JWT support
 - Optional `redis` for Redis-backed token storage
 - Optional `fastapi` for FastAPI dependency adapters
 - Optional `boto3` / `botocore` for S3-compatible storage
@@ -38,7 +38,7 @@ As a dependency in another project:
 ```toml
 [project]
 dependencies = [
-    "rgc-backend-kit>=0.1.0,<0.2.0",
+    "rgc-backend-kit>=0.1.1,<0.2.0",
 ]
 ```
 
@@ -47,8 +47,8 @@ Use extras only for the optional integrations that project needs:
 ```toml
 [project]
 dependencies = [
-    "rgc-backend-kit[redis]>=0.1.0,<0.2.0",
-    "rgc-backend-kit[storage]>=0.1.0,<0.2.0",
+    "rgc-backend-kit[redis]>=0.1.1,<0.2.0",
+    "rgc-backend-kit[storage]>=0.1.1,<0.2.0",
 ]
 ```
 
@@ -57,7 +57,7 @@ Host applications may add their own constraints for shared dependencies. For exa
 ```toml
 [project]
 dependencies = [
-    "rgc-backend-kit>=0.1.0,<0.2.0",
+    "rgc-backend-kit>=0.1.1,<0.2.0",
 ]
 ```
 
@@ -154,7 +154,7 @@ rm -rf /tmp/rgc-backend-kit-package-full-test
 mkdir -p /tmp/rgc-backend-kit-package-full-test
 cd /tmp/rgc-backend-kit-package-full-test
 uv venv
-uv pip install '/home/rgc318/Projects/rgc-backend-kit/dist/rgc_backend_kit-0.1.0-py3-none-any.whl[fastapi,redis,storage]' httpx
+uv pip install '/home/rgc318/Projects/rgc-backend-kit/dist/rgc_backend_kit-0.1.1-py3-none-any.whl[fastapi,redis,storage]' httpx
 ```
 
 ## Documentation
